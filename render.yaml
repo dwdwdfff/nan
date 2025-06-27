@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: financial-system
+    env: node
+    buildCommand: npm install
+    startCommand: node server.js
+    rootDir: financial-system
+    ports:
+      - 12000
+
+
