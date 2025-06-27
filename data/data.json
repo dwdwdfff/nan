@@ -1,0 +1,12 @@
+{
+  "clients": [
+    {
+      "id": 1,
+      "clientId": "C001",
+      "name": "أحمد محمد",
+      "createdAt": "2025-06-27T18:19:00.000Z"
+    }
+  ],
+  "expenses": [],
+  "revenues": []
+}

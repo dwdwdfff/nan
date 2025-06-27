@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة الإيرادات - NanoChip</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="main-layout">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-microchip"></i>
+                    </div>
+                    <span>NanoChip</span>
+                </div>
+            </div>
+            <ul class="sidebar-nav">
+                <li><a href="/dashboard"><i class="fas fa-tachometer-alt"></i> لوحة التحكم</a></li>
+                <li><a href="/clients"><i class="fas fa-users"></i> إدارة العملاء</a></li>
+                <li><a href="/expenses"><i class="fas fa-money-bill-wave"></i> المصروفات</a></li>
+                <li><a href="/revenues" class="active"><i class="fas fa-chart-line"></i> الإيرادات</a></li>
+                <li><a href="/reports"><i class="fas fa-file-alt"></i> التقارير</a></li>
+                <li><a href="/profile"><i class="fas fa-user-cog"></i> الملف الشخصي</a></li>
+                <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a></li>
+            </ul>
+        </nav>
+
+        <!-- Sidebar Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <div class="header-content">
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    
+                    <div class="logo">
+                        <div class="logo-icon">
+                            <i class="fas fa-microchip"></i>
+                        </div>
+                        <span>NanoChip</span>
+                    </div>
+                    
+                    <div class="header-actions">
+                        <div class="user-info">
+                            <span class="user-name">المستخدم</span>
+                            <div class="user-avatar">م</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container">
+                <div class="page-header fade-in">
+                    <h1 class="page-title">
+                        <i class="fas fa-chart-line"></i>
+                        إدارة الإيرادات
+                    </h1>
+                    <p class="page-subtitle">سجل وتابع إيراداتك ومبيعاتك</p>
+                </div>
+
+                <!-- Add Revenue Form -->
+                <div class="card fade-in">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-plus-circle"></i>
+                            إضافة إيراد جديد
+                        </h3>
+                    </div>
+                    <form id="addRevenueForm">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                            <div class="form-group">
+                                <label class="form-label" for="revenueClient">
+                                    <i class="fas fa-user"></i>
+                                    العميل
+                                </label>
+                                <select id="revenueClient" name="clientId" class="form-select" required>
+                                    <option value="">اختر العميل</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="revenueAmount">
+                                    <i class="fas fa-dollar-sign"></i>
+                                    المبلغ (جنيه)
+                                </label>
+                                <input type="number" id="revenueAmount" name="amount" class="form-input" required 
+                                       placeholder="ادخل المبلغ" min="0" step="0.01">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="revenueProduct">
+                                <i class="fas fa-box"></i>
+                                اسم المنتج/الخدمة (اختياري)
+                            </label>
+                            <input type="text" id="revenueProduct" name="product" class="form-input" 
+                                   placeholder="ادخل اسم المنتج أو الخدمة">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="revenueNotes">
+                                <i class="fas fa-sticky-note"></i>
+                                الملاحظات (اختياري)
+                            </label>
+                            <textarea id="revenueNotes" name="notes" class="form-textarea" 
+                                      placeholder="أضف أي ملاحظات إضافية..."></textarea>
+                        </div>
+                        
+                        <div style="margin-top: 20px;">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-plus"></i>
+                                إضافة الإيراد
+                            </button>
+                            <button type="reset" class="btn btn-outline">
+                                <i class="fas fa-undo"></i>
+                                إعادة تعيين
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="stats-grid slide-in-right">
+                    <div class="stat-card success">
+                        <div class="stat-header">
+                            <div class="stat-title">إيرادات اليوم</div>
+                            <div class="stat-icon success">
+                                <i class="fas fa-calendar-day"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="todayRevenues">0</div>
+                        <div class="stat-change" id="todayRevenuesChange">جنيه</div>
+                    </div>
+
+                    <div class="stat-card primary">
+                        <div class="stat-header">
+                            <div class="stat-title">إيرادات الشهر</div>
+                            <div class="stat-icon primary">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="monthRevenues">0</div>
+                        <div class="stat-change" id="monthRevenuesChange">جنيه</div>
+                    </div>
+
+                    <div class="stat-card warning">
+                        <div class="stat-header">
+                            <div class="stat-title">إجمالي الإيرادات</div>
+                            <div class="stat-icon warning">
+                                <i class="fas fa-chart-bar"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="totalRevenues">0</div>
+                        <div class="stat-change" id="totalRevenuesChange">جنيه</div>
+                    </div>
+
+                    <div class="stat-card danger">
+                        <div class="stat-header">
+                            <div class="stat-title">متوسط الإيراد</div>
+                            <div class="stat-icon danger">
+                                <i class="fas fa-calculator"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="avgRevenue">0</div>
+                        <div class="stat-change" id="avgRevenueChange">جنيه</div>
+                    </div>
+                </div>
+
+                <!-- Search and Filter -->
+                <div class="card fade-in">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-filter"></i>
+                            البحث والفلترة
+                        </h3>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div class="form-group">
+                            <label class="form-label" for="searchRevenues">
+                                <i class="fas fa-search"></i>
+                                البحث
+                            </label>
+                            <input type="text" id="searchRevenues" class="form-input" placeholder="ابحث في الإيرادات...">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="filterClient">
+                                <i class="fas fa-user"></i>
+                                فلترة بالعميل
+                            </label>
+                            <select id="filterClient" class="form-select">
+                                <option value="">جميع العملاء</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="filterDateFrom">
+                                <i class="fas fa-calendar"></i>
+                                من تاريخ
+                            </label>
+                            <input type="date" id="filterDateFrom" class="form-input">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="filterDateTo">
+                                <i class="fas fa-calendar"></i>
+                                إلى تاريخ
+                            </label>
+                            <input type="date" id="filterDateTo" class="form-input">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Revenues List -->
+                <div class="card slide-in-right">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-list"></i>
+                            قائمة الإيرادات
+                            <span class="badge success" id="revenuesCount">0</span>
+                        </h3>
+                        <button class="btn btn-success" onclick="exportRevenues()">
+                            <i class="fas fa-download"></i>
+                            تصدير البيانات
+                        </button>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="table" id="revenuesTable">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>العميل</th>
+                                    <th>المبلغ</th>
+                                    <th>المنتج/الخدمة</th>
+                                    <th>التاريخ</th>
+                                    <th>الملاحظات</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-color); opacity: 0.6;">
+                                        <i class="fas fa-chart-line" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                                        لا توجد إيرادات حتى الآن
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Top Products -->
+                <div class="card fade-in">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-trophy"></i>
+                            أفضل المنتجات/الخدمات
+                        </h3>
+                    </div>
+                    <div id="topProducts">
+                        <div style="text-align: center; padding: 40px; color: var(--text-color); opacity: 0.6;">
+                            <i class="fas fa-box" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                            لا توجد بيانات منتجات حتى الآن
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <div class="bottom-nav-content">
+                <a href="/dashboard" class="bottom-nav-item">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>الرئيسية</span>
+                </a>
+                <a href="/clients" class="bottom-nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>العملاء</span>
+                </a>
+                <a href="/expenses" class="bottom-nav-item">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>المصروفات</span>
+                </a>
+                <a href="/revenues" class="bottom-nav-item active">
+                    <i class="fas fa-chart-line"></i>
+                    <span>الإيرادات</span>
+                </a>
+                <a href="/reports" class="bottom-nav-item">
+                    <i class="fas fa-file-alt"></i>
+                    <span>التقارير</span>
+                </a>
+            </div>
+        </nav>
+    </div>
+
+    <script src="/js/app.js"></script>
+    <script>
+        class RevenuesManager {
+            constructor() {
+                this.revenues = [];
+                this.filteredRevenues = [];
+                this.clients = [];
+                this.init();
+            }
+
+            async init() {
+                await this.loadData();
+                this.setupEventListeners();
+                this.populateClientSelects();
+                this.renderRevenues();
+                this.updateStats();
+                this.renderTopProducts();
+            }
+
+            async loadData() {
+                await window.app.loadData();
+                this.revenues = window.app.data.revenues || [];
+                this.clients = window.app.data.clients || [];
+                this.filteredRevenues = [...this.revenues];
+                this.updateRevenuesCount();
+            }
+
+            setupEventListeners() {
+                // Add revenue form
+                document.getElementById('addRevenueForm').addEventListener('submit', this.addRevenue.bind(this));
+                
+                // Search and filter
+                document.getElementById('searchRevenues').addEventListener('input', 
+                    debounce(this.filterRevenues.bind(this), 300));
+                document.getElementById('filterClient').addEventListener('change', this.filterRevenues.bind(this));
+                document.getElementById('filterDateFrom').addEventListener('change', this.filterRevenues.bind(this));
+                document.getElementById('filterDateTo').addEventListener('change', this.filterRevenues.bind(this));
+            }
+
+            populateClientSelects() {
+                const revenueClientSelect = document.getElementById('revenueClient');
+                const filterClientSelect = document.getElementById('filterClient');
+                
+                // Clear existing options (except first)
+                revenueClientSelect.innerHTML = '<option value="">اختر العميل</option>';
+                filterClientSelect.innerHTML = '<option value="">جميع العملاء</option>';
+                
+                this.clients.forEach(client => {
+                    const option1 = new Option(client.name, client.clientId);
+                    const option2 = new Option(client.name, client.clientId);
+                    revenueClientSelect.add(option1);
+                    filterClientSelect.add(option2);
+                });
+            }
+
+            async addRevenue(e) {
+                e.preventDefault();
+                
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                window.app.showLoading(submitBtn);
+                
+                const formData = new FormData(e.target);
+                const revenueData = Object.fromEntries(formData);
+                
+                // Validate form
+                if (!window.app.validateForm(e.target)) {
+                    window.app.hideLoading(submitBtn);
+                    return;
+                }
+                
+                try {
+                    const response = await fetch('/api/revenues', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(revenueData)
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        window.app.showAlert('تم إضافة الإيراد بنجاح! 💰', 'success');
+                        e.target.reset();
+                        await this.loadData();
+                        this.renderRevenues();
+                        this.updateStats();
+                        this.renderTopProducts();
+                    } else {
+                        window.app.showAlert(result.message || 'حدث خطأ في إضافة الإيراد', 'error');
+                    }
+                } catch (error) {
+                    console.error('خطأ في إضافة الإيراد:', error);
+                    window.app.showAlert('حدث خطأ في الاتصال بالخادم', 'error');
+                } finally {
+                    window.app.hideLoading(submitBtn);
+                }
+            }
+
+            filterRevenues() {
+                const searchTerm = document.getElementById('searchRevenues').value.toLowerCase();
+                const clientFilter = document.getElementById('filterClient').value;
+                const dateFrom = document.getElementById('filterDateFrom').value;
+                const dateTo = document.getElementById('filterDateTo').value;
+                
+                this.filteredRevenues = this.revenues.filter(revenue => {
+                    // Search filter
+                    const matchesSearch = !searchTerm || 
+                        window.app.getClientName(revenue.clientId).toLowerCase().includes(searchTerm) ||
+                        (revenue.product && revenue.product.toLowerCase().includes(searchTerm)) ||
+                        (revenue.notes && revenue.notes.toLowerCase().includes(searchTerm)) ||
+                        revenue.amount.toString().includes(searchTerm);
+                    
+                    // Client filter
+                    const matchesClient = !clientFilter || revenue.clientId === clientFilter;
+                    
+                    // Date filters
+                    const revenueDate = new Date(revenue.createdAt).toISOString().split('T')[0];
+                    const matchesDateFrom = !dateFrom || revenueDate >= dateFrom;
+                    const matchesDateTo = !dateTo || revenueDate <= dateTo;
+                    
+                    return matchesSearch && matchesClient && matchesDateFrom && matchesDateTo;
+                });
+                
+                this.renderRevenues();
+            }
+
+            updateStats() {
+                const now = new Date();
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                const thisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+                
+                const todayRevenues = this.revenues
+                    .filter(rev => new Date(rev.createdAt) >= today)
+                    .reduce((sum, rev) => sum + rev.amount, 0);
+                
+                const monthRevenues = this.revenues
+                    .filter(rev => new Date(rev.createdAt) >= thisMonth)
+                    .reduce((sum, rev) => sum + rev.amount, 0);
+                
+                const totalRevenues = this.revenues.reduce((sum, rev) => sum + rev.amount, 0);
+                const avgRevenue = this.revenues.length > 0 ? totalRevenues / this.revenues.length : 0;
+                
+                // Animate values
+                this.animateStatValue('todayRevenues', todayRevenues);
+                this.animateStatValue('monthRevenues', monthRevenues);
+                this.animateStatValue('totalRevenues', totalRevenues);
+                this.animateStatValue('avgRevenue', avgRevenue);
+            }
+
+            animateStatValue(elementId, value) {
+                const element = document.getElementById(elementId);
+                const currentValue = parseInt(element.textContent.replace(/[^\d]/g, '')) || 0;
+                
+                const startTime = performance.now();
+                const animate = (currentTime) => {
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / 1000, 1);
+                    
+                    const current = currentValue + (value - currentValue) * window.app.easeOutCubic(progress);
+                    element.textContent = this.formatCurrency(current);
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(animate);
+                    }
+                };
+                requestAnimationFrame(animate);
+            }
+
+            renderRevenues() {
+                const tbody = document.querySelector('#revenuesTable tbody');
+                
+                if (this.filteredRevenues.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-color); opacity: 0.6;">
+                                <i class="fas fa-chart-line" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                                ${this.revenues.length === 0 ? 'لا توجد إيرادات حتى الآن' : 'لا توجد نتائج للبحث'}
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                tbody.innerHTML = this.filteredRevenues
+                    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                    .map((revenue, index) => `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <div class="user-avatar" style="width: 30px; height: 30px; font-size: 0.8rem;">
+                                        ${window.app.getClientName(revenue.clientId).charAt(0)}
+                                    </div>
+                                    ${window.app.getClientName(revenue.clientId)}
+                                </div>
+                            </td>
+                            <td style="color: var(--success-color); font-weight: 600;">
+                                ${this.formatCurrency(revenue.amount)}
+                            </td>
+                            <td>
+                                ${revenue.product ? `<span class="badge primary">${revenue.product}</span>` : '-'}
+                            </td>
+                            <td>${window.app.formatDate(revenue.createdAt)}</td>
+                            <td>${revenue.notes || '-'}</td>
+                            <td>
+                                <div style="display: flex; gap: 5px;">
+                                    <button class="btn-icon warning" onclick="editRevenue('${revenue.id}')" title="تعديل">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn-icon danger" onclick="deleteRevenue('${revenue.id}')" title="حذف">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('');
+            }
+
+            renderTopProducts() {
+                const productStats = {};
+                
+                this.revenues.forEach(revenue => {
+                    if (revenue.product && revenue.product.trim()) {
+                        const product = revenue.product.trim();
+                        if (!productStats[product]) {
+                            productStats[product] = { count: 0, total: 0 };
+                        }
+                        productStats[product].count++;
+                        productStats[product].total += revenue.amount;
+                    }
+                });
+                
+                const sortedProducts = Object.entries(productStats)
+                    .sort((a, b) => b[1].total - a[1].total)
+                    .slice(0, 5);
+                
+                const container = document.getElementById('topProducts');
+                
+                if (sortedProducts.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: var(--text-color); opacity: 0.6;">
+                            <i class="fas fa-box" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                            لا توجد بيانات منتجات حتى الآن
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = `
+                    <div style="display: grid; gap: 15px;">
+                        ${sortedProducts.map(([product, stats], index) => `
+                            <div class="product-item">
+                                <div class="product-rank">${index + 1}</div>
+                                <div class="product-info">
+                                    <div class="product-name">${product}</div>
+                                    <div class="product-stats">
+                                        <span class="product-count">${stats.count} مبيعة</span>
+                                        <span class="product-total">${this.formatCurrency(stats.total)}</span>
+                                    </div>
+                                </div>
+                                <div class="product-progress">
+                                    <div class="progress-bar" style="width: ${(stats.total / sortedProducts[0][1].total) * 100}%"></div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            updateRevenuesCount() {
+                document.getElementById('revenuesCount').textContent = this.revenues.length;
+            }
+
+            formatCurrency(amount) {
+                return new Intl.NumberFormat('ar-EG', {
+                    style: 'currency',
+                    currency: 'EGP',
+                    minimumFractionDigits: 0
+                }).format(amount);
+            }
+        }
+
+        // Global functions
+        function editRevenue(revenueId) {
+            window.app.showAlert('ميزة التعديل ستكون متاحة قريباً', 'warning');
+        }
+
+        async function deleteRevenue(revenueId) {
+            const revenue = window.revenuesManager.revenues.find(r => r.id == revenueId);
+            if (!revenue) {
+                window.app.showAlert('الإيراد غير موجود', 'error');
+                return;
+            }
+
+            const clientName = window.app.getClientName(revenue.clientId);
+            const amount = window.revenuesManager.formatCurrency(revenue.amount);
+            const date = window.app.formatDate(revenue.createdAt);
+            const product = revenue.product || 'غير محدد';
+
+            const confirmed = await window.app.showConfirmationDialog({
+                title: 'تأكيد حذف الإيراد',
+                subtitle: 'هذا الإجراء لا يمكن التراجع عنه',
+                message: 'هل أنت متأكد من أنك تريد حذف هذا الإيراد نهائياً؟',
+                icon: 'exclamation-triangle',
+                confirmText: 'حذف الإيراد',
+                confirmIcon: 'trash',
+                cancelText: 'إلغاء',
+                itemInfo: {
+                    name: `إيراد ${clientName}`,
+                    details: `المبلغ: ${amount} • المنتج: ${product} • التاريخ: ${date}`
+                },
+                onConfirm: async () => {
+                    try {
+                        const response = await fetch(`/api/revenues/${revenueId}`, {
+                            method: 'DELETE'
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (result.success) {
+                            // Reload data and refresh display
+                            await window.revenuesManager.loadData();
+                            window.revenuesManager.renderRevenues();
+                            window.revenuesManager.updateStats();
+                            window.revenuesManager.renderTopProducts();
+                            
+                            window.app.showAlert('تم حذف الإيراد بنجاح! 🗑️', 'success');
+                            return true;
+                        } else {
+                            window.app.showAlert(result.message || 'حدث خطأ في حذف الإيراد', 'error');
+                            return false;
+                        }
+                    } catch (error) {
+                        console.error('خطأ في حذف الإيراد:', error);
+                        window.app.showAlert('حدث خطأ في الاتصال بالخادم', 'error');
+                        return false;
+                    }
+                }
+            });
+        }
+
+        function exportRevenues() {
+            const revenues = window.revenuesManager.filteredRevenues;
+            if (revenues.length === 0) {
+                window.app.showAlert('لا توجد إيرادات للتصدير', 'warning');
+                return;
+            }
+            
+            const csvContent = "data:text/csv;charset=utf-8," 
+                + "العميل,المبلغ,المنتج,التاريخ,الملاحظات\n"
+                + revenues.map(revenue => 
+                    `"${window.app.getClientName(revenue.clientId)}","${revenue.amount}","${revenue.product || ''}","${window.app.formatDate(revenue.createdAt)}","${revenue.notes || ''}"`
+                ).join("\n");
+            
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "revenues.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            window.app.showAlert('تم تصدير بيانات الإيرادات بنجاح', 'success');
+        }
+
+        // Initialize revenues manager
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                window.revenuesManager = new RevenuesManager();
+            }, 100);
+        });
+    </script>
+
+    <style>
+        .badge.success {
+            background: rgba(74, 222, 128, 0.1);
+            color: var(--success-color);
+        }
+
+        .product-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: var(--light-color);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .product-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .product-rank {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .product-info {
+            flex: 1;
+        }
+
+        .product-name {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 5px;
+        }
+
+        .product-stats {
+            display: flex;
+            gap: 15px;
+            font-size: 0.9rem;
+        }
+
+        .product-count {
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        .product-total {
+            color: var(--success-color);
+            font-weight: 600;
+        }
+
+        .product-progress {
+            width: 100px;
+            height: 8px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+    </style>
+</body>
+</html>

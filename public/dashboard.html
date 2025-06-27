@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - NanoChip</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="main-layout">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-microchip"></i>
+                    </div>
+                    <span>NanoChip</span>
+                </div>
+            </div>
+            <ul class="sidebar-nav">
+                <li><a href="/dashboard" class="active"><i class="fas fa-tachometer-alt"></i> لوحة التحكم</a></li>
+                <li><a href="/clients"><i class="fas fa-users"></i> إدارة العملاء</a></li>
+                <li><a href="/expenses"><i class="fas fa-money-bill-wave"></i> المصروفات</a></li>
+                <li><a href="/revenues"><i class="fas fa-chart-line"></i> الإيرادات</a></li>
+                <li><a href="/reports"><i class="fas fa-file-alt"></i> التقارير</a></li>
+                <li><a href="/profile"><i class="fas fa-user-cog"></i> الملف الشخصي</a></li>
+                <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a></li>
+            </ul>
+        </nav>
+
+        <!-- Sidebar Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <div class="header-content">
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    
+                    <div class="logo">
+                        <div class="logo-icon">
+                            <i class="fas fa-microchip"></i>
+                        </div>
+                        <span>NanoChip</span>
+                    </div>
+                    
+                    <div class="header-actions">
+                        <div class="user-info">
+                            <span class="user-name">المستخدم</span>
+                            <div class="user-avatar">م</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container">
+                <div class="page-header fade-in">
+                    <h1 class="page-title">
+                        <i class="fas fa-tachometer-alt"></i>
+                        لوحة التحكم
+                    </h1>
+                    <p class="page-subtitle">نظرة شاملة على وضعك المالي</p>
+                </div>
+
+                <!-- Period Filter -->
+                <div class="card fade-in">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-calendar-alt"></i>
+                            فترة العرض
+                        </h3>
+                    </div>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="btn btn-outline period-btn active" data-period="today">اليوم</button>
+                        <button class="btn btn-outline period-btn" data-period="week">الأسبوع</button>
+                        <button class="btn btn-outline period-btn" data-period="month">الشهر</button>
+                        <button class="btn btn-outline period-btn" data-period="total">الإجمالي</button>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="stats-grid slide-in-right">
+                    <div class="stat-card success">
+                        <div class="stat-header">
+                            <div class="stat-title">إجمالي الإيرادات</div>
+                            <div class="stat-icon success">
+                                <i class="fas fa-arrow-up"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="totalRevenues">0</div>
+                        <div class="stat-change positive" id="revenuesChange">+0%</div>
+                    </div>
+
+                    <div class="stat-card danger">
+                        <div class="stat-header">
+                            <div class="stat-title">إجمالي المصروفات</div>
+                            <div class="stat-icon danger">
+                                <i class="fas fa-arrow-down"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="totalExpenses">0</div>
+                        <div class="stat-change negative" id="expensesChange">-0%</div>
+                    </div>
+
+                    <div class="stat-card primary">
+                        <div class="stat-header">
+                            <div class="stat-title">صافي الربح</div>
+                            <div class="stat-icon primary">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="netProfit">0</div>
+                        <div class="stat-change" id="profitChange">0%</div>
+                    </div>
+
+                    <div class="stat-card warning">
+                        <div class="stat-header">
+                            <div class="stat-title">عدد العملاء</div>
+                            <div class="stat-icon warning">
+                                <i class="fas fa-users"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="totalClients">0</div>
+                        <div class="stat-change positive" id="clientsChange">+0</div>
+                    </div>
+                </div>
+
+                <!-- Recent Transactions -->
+                <div class="card fade-in">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-history"></i>
+                            آخر المعاملات
+                        </h3>
+                        <div>
+                            <button class="btn btn-primary" onclick="location.href='/expenses'">
+                                <i class="fas fa-plus"></i>
+                                إضافة مصروف
+                            </button>
+                            <button class="btn btn-success" onclick="location.href='/revenues'">
+                                <i class="fas fa-plus"></i>
+                                إضافة إيراد
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="table" id="recentTransactions">
+                            <thead>
+                                <tr>
+                                    <th>النوع</th>
+                                    <th>العميل</th>
+                                    <th>المبلغ</th>
+                                    <th>التاريخ</th>
+                                    <th>الملاحظات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-color); opacity: 0.6;">
+                                        <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                                        لا توجد معاملات حتى الآن
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card fade-in">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-bolt"></i>
+                            إجراءات سريعة
+                        </h3>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <a href="/clients" class="btn btn-outline" style="text-decoration: none; padding: 20px;">
+                            <i class="fas fa-user-plus"></i>
+                            إضافة عميل جديد
+                        </a>
+                        <a href="/expenses" class="btn btn-outline" style="text-decoration: none; padding: 20px;">
+                            <i class="fas fa-money-bill-wave"></i>
+                            تسجيل مصروف
+                        </a>
+                        <a href="/revenues" class="btn btn-outline" style="text-decoration: none; padding: 20px;">
+                            <i class="fas fa-chart-line"></i>
+                            تسجيل إيراد
+                        </a>
+                        <a href="/reports" class="btn btn-outline" style="text-decoration: none; padding: 20px;">
+                            <i class="fas fa-file-alt"></i>
+                            عرض التقارير
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <div class="bottom-nav-content">
+                <a href="/dashboard" class="bottom-nav-item active">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>الرئيسية</span>
+                </a>
+                <a href="/clients" class="bottom-nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>العملاء</span>
+                </a>
+                <a href="/expenses" class="bottom-nav-item">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>المصروفات</span>
+                </a>
+                <a href="/revenues" class="bottom-nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>الإيرادات</span>
+                </a>
+                <a href="/reports" class="bottom-nav-item">
+                    <i class="fas fa-file-alt"></i>
+                    <span>التقارير</span>
+                </a>
+            </div>
+        </nav>
+    </div>
+
+    <script src="/js/app.js"></script>
+    <script>
+        class Dashboard {
+            constructor() {
+                this.currentPeriod = 'today';
+                this.stats = {};
+                this.init();
+            }
+
+            async init() {
+                await this.loadStats();
+                this.setupEventListeners();
+                this.loadRecentTransactions();
+            }
+
+            setupEventListeners() {
+                // Period filter buttons
+                document.querySelectorAll('.period-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+                        e.target.classList.add('active');
+                        this.currentPeriod = e.target.dataset.period;
+                        this.updateStatsDisplay();
+                    });
+                });
+            }
+
+            async loadStats() {
+                try {
+                    const response = await fetch('/api/dashboard-stats');
+                    if (response.ok) {
+                        this.stats = await response.json();
+                        this.updateStatsDisplay();
+                    }
+                } catch (error) {
+                    console.error('خطأ في تحميل الإحصائيات:', error);
+                }
+            }
+
+            updateStatsDisplay() {
+                const periodStats = this.stats[this.currentPeriod] || { revenues: 0, expenses: 0, profit: 0 };
+                
+                // Animate values
+                this.animateStatValue('totalRevenues', periodStats.revenues);
+                this.animateStatValue('totalExpenses', periodStats.expenses);
+                this.animateStatValue('netProfit', periodStats.profit);
+                
+                // Update profit color
+                const profitElement = document.getElementById('netProfit');
+                const profitChangeElement = document.getElementById('profitChange');
+                
+                if (periodStats.profit > 0) {
+                    profitElement.style.color = 'var(--success-color)';
+                    profitChangeElement.className = 'stat-change positive';
+                    profitChangeElement.textContent = '+' + this.formatCurrency(periodStats.profit);
+                } else if (periodStats.profit < 0) {
+                    profitElement.style.color = 'var(--danger-color)';
+                    profitChangeElement.className = 'stat-change negative';
+                    profitChangeElement.textContent = this.formatCurrency(periodStats.profit);
+                } else {
+                    profitElement.style.color = 'var(--text-color)';
+                    profitChangeElement.className = 'stat-change';
+                    profitChangeElement.textContent = this.formatCurrency(0);
+                }
+
+                // Update clients count
+                if (this.stats.total) {
+                    document.getElementById('totalClients').textContent = window.app.data.clients.length;
+                    document.getElementById('clientsChange').textContent = '+' + window.app.data.clients.length;
+                }
+            }
+
+            animateStatValue(elementId, value) {
+                const element = document.getElementById(elementId);
+                const currentValue = parseInt(element.textContent.replace(/[^\d]/g, '')) || 0;
+                
+                if (elementId === 'totalClients') {
+                    window.app.animateValue(element, currentValue, value, 800);
+                } else {
+                    const startValue = currentValue;
+                    const endValue = Math.abs(value);
+                    
+                    window.app.animateValue({
+                        textContent: ''
+                    }, startValue, endValue, 1000);
+                    
+                    // Custom animation for currency
+                    const startTime = performance.now();
+                    const animate = (currentTime) => {
+                        const elapsed = currentTime - startTime;
+                        const progress = Math.min(elapsed / 1000, 1);
+                        
+                        const current = startValue + (endValue - startValue) * window.app.easeOutCubic(progress);
+                        element.textContent = this.formatCurrency(value < 0 ? -current : current);
+                        
+                        if (progress < 1) {
+                            requestAnimationFrame(animate);
+                        }
+                    };
+                    requestAnimationFrame(animate);
+                }
+            }
+
+            async loadRecentTransactions() {
+                await window.app.loadData();
+                const data = window.app.data;
+                
+                // Combine and sort transactions
+                const transactions = [
+                    ...data.expenses.map(exp => ({ ...exp, type: 'expense' })),
+                    ...data.revenues.map(rev => ({ ...rev, type: 'revenue' }))
+                ].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                .slice(0, 10); // Show last 10 transactions
+
+                this.renderTransactions(transactions);
+            }
+
+            renderTransactions(transactions) {
+                const tbody = document.querySelector('#recentTransactions tbody');
+                
+                if (transactions.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-color); opacity: 0.6;">
+                                <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                                لا توجد معاملات حتى الآن
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                tbody.innerHTML = transactions.map(transaction => `
+                    <tr>
+                        <td>
+                            <span class="badge ${transaction.type === 'revenue' ? 'success' : 'danger'}">
+                                <i class="fas fa-${transaction.type === 'revenue' ? 'arrow-up' : 'arrow-down'}"></i>
+                                ${transaction.type === 'revenue' ? 'إيراد' : 'مصروف'}
+                            </span>
+                        </td>
+                        <td>${window.app.getClientName(transaction.clientId)}</td>
+                        <td style="font-weight: 600; color: var(--${transaction.type === 'revenue' ? 'success' : 'danger'}-color);">
+                            ${this.formatCurrency(transaction.amount)}
+                        </td>
+                        <td>${window.app.formatDate(transaction.createdAt)}</td>
+                        <td>${transaction.notes || transaction.product || '-'}</td>
+                    </tr>
+                `).join('');
+            }
+
+            formatCurrency(amount) {
+                return new Intl.NumberFormat('ar-EG', {
+                    style: 'currency',
+                    currency: 'EGP',
+                    minimumFractionDigits: 0
+                }).format(amount);
+            }
+        }
+
+        // Initialize dashboard when app is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                new Dashboard();
+            }, 100);
+        });
+    </script>
+
+    <style>
+        .badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .badge.success {
+            background: rgba(74, 222, 128, 0.1);
+            color: var(--success-color);
+        }
+
+        .badge.danger {
+            background: rgba(248, 113, 113, 0.1);
+            color: var(--danger-color);
+        }
+
+        .period-btn.active {
+            background: var(--gradient-primary);
+            color: white;
+            border-color: var(--primary-color);
+        }
+    </style>
+</body>
+</html>

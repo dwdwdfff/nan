@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول - NanoChip</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card fade-in">
+            <div class="login-header">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-microchip"></i>
+                    </div>
+                    <span>NanoChip</span>
+                </div>
+                <h1>أهلاً وسهلاً</h1>
+                <p>سجل دخولك لإدارة نظامك المالي</p>
+            </div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label" for="username">
+                        <i class="fas fa-user"></i>
+                        اسم المستخدم
+                    </label>
+                    <input type="text" id="username" name="username" class="form-input" required placeholder="ادخل اسم المستخدم">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="password">
+                        <i class="fas fa-lock"></i>
+                        كلمة المرور
+                    </label>
+                    <input type="password" id="password" name="password" class="form-input" required placeholder="ادخل كلمة المرور">
+                </div>
+                
+                <div id="errorMessage" class="alert alert-error" style="display: none;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span></span>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;">
+                    <span class="btn-text">دخول</span>
+                    <div class="loading" style="display: none;"></div>
+                </button>
+            </form>
+            
+
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const btnText = submitBtn.querySelector('.btn-text');
+            const loading = submitBtn.querySelector('.loading');
+            const errorDiv = document.getElementById('errorMessage');
+            
+            // Show loading
+            btnText.style.display = 'none';
+            loading.style.display = 'inline-block';
+            submitBtn.disabled = true;
+            errorDiv.style.display = 'none';
+            
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+            
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    window.location.href = '/dashboard';
+                } else {
+                    errorDiv.querySelector('span').textContent = result.message || 'حدث خطأ في تسجيل الدخول';
+                    errorDiv.style.display = 'flex';
+                }
+            } catch (error) {
+                console.error('خطأ في تسجيل الدخول:', error);
+                errorDiv.querySelector('span').textContent = 'حدث خطأ في الاتصال بالخادم';
+                errorDiv.style.display = 'flex';
+            } finally {
+                // Hide loading
+                btnText.style.display = 'inline';
+                loading.style.display = 'none';
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Add enter key support
+        document.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+            }
+        });
+    </script>
+</body>
+</html>

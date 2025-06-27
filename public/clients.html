@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة العملاء - NanoChip</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="main-layout">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-microchip"></i>
+                    </div>
+                    <span>NanoChip</span>
+                </div>
+            </div>
+            <ul class="sidebar-nav">
+                <li><a href="/dashboard"><i class="fas fa-tachometer-alt"></i> لوحة التحكم</a></li>
+                <li><a href="/clients" class="active"><i class="fas fa-users"></i> إدارة العملاء</a></li>
+                <li><a href="/expenses"><i class="fas fa-money-bill-wave"></i> المصروفات</a></li>
+                <li><a href="/revenues"><i class="fas fa-chart-line"></i> الإيرادات</a></li>
+                <li><a href="/reports"><i class="fas fa-file-alt"></i> التقارير</a></li>
+                <li><a href="/profile"><i class="fas fa-user-cog"></i> الملف الشخصي</a></li>
+                <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a></li>
+            </ul>
+        </nav>
+
+        <!-- Sidebar Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <div class="header-content">
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    
+                    <div class="logo">
+                        <div class="logo-icon">
+                            <i class="fas fa-microchip"></i>
+                        </div>
+                        <span>NanoChip</span>
+                    </div>
+                    
+                    <div class="header-actions">
+                        <div class="user-info">
+                            <span class="user-name">المستخدم</span>
+                            <div class="user-avatar">م</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container">
+                <div class="page-header fade-in">
+                    <h1 class="page-title">
+                        <i class="fas fa-users"></i>
+                        إدارة العملاء
+                    </h1>
+                    <p class="page-subtitle">أضف وأدر عملاءك بسهولة</p>
+                </div>
+
+                <!-- Add Client Form -->
+                <div class="card fade-in">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-user-plus"></i>
+                            إضافة عميل جديد
+                        </h3>
+                    </div>
+                    <form id="addClientForm">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                            <div class="form-group">
+                                <label class="form-label" for="clientName">
+                                    <i class="fas fa-user"></i>
+                                    اسم العميل
+                                </label>
+                                <input type="text" id="clientName" name="name" class="form-input" required placeholder="ادخل اسم العميل">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="clientId">
+                                    <i class="fas fa-id-card"></i>
+                                    رقم العميل
+                                </label>
+                                <input type="text" id="clientId" name="clientId" class="form-input" required placeholder="ادخل رقم العميل">
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 20px;">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-plus"></i>
+                                إضافة العميل
+                            </button>
+                            <button type="reset" class="btn btn-outline">
+                                <i class="fas fa-undo"></i>
+                                إعادة تعيين
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Search and Filter -->
+                <div class="card fade-in">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-search"></i>
+                            البحث والفلترة
+                        </h3>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                        <div class="form-group">
+                            <label class="form-label" for="searchClients">
+                                <i class="fas fa-search"></i>
+                                البحث في العملاء
+                            </label>
+                            <input type="text" id="searchClients" class="form-input" placeholder="ابحث بالاسم أو الرقم...">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-sort"></i>
+                                ترتيب حسب
+                            </label>
+                            <select id="sortClients" class="form-select">
+                                <option value="name">الاسم</option>
+                                <option value="clientId">رقم العميل</option>
+                                <option value="createdAt">تاريخ الإضافة</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Clients List -->
+                <div class="card slide-in-right">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-list"></i>
+                            قائمة العملاء
+                            <span class="badge primary" id="clientsCount">0</span>
+                        </h3>
+                        <button class="btn btn-success" onclick="exportClients()">
+                            <i class="fas fa-download"></i>
+                            تصدير البيانات
+                        </button>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="table" id="clientsTable">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>اسم العميل</th>
+                                    <th>رقم العميل</th>
+                                    <th>تاريخ الإضافة</th>
+                                    <th>إجمالي الإيرادات</th>
+                                    <th>إجمالي المصروفات</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-color); opacity: 0.6;">
+                                        <i class="fas fa-users" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                                        لا يوجد عملاء حتى الآن
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <div class="bottom-nav-content">
+                <a href="/dashboard" class="bottom-nav-item">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>الرئيسية</span>
+                </a>
+                <a href="/clients" class="bottom-nav-item active">
+                    <i class="fas fa-users"></i>
+                    <span>العملاء</span>
+                </a>
+                <a href="/expenses" class="bottom-nav-item">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>المصروفات</span>
+                </a>
+                <a href="/revenues" class="bottom-nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>الإيرادات</span>
+                </a>
+                <a href="/reports" class="bottom-nav-item">
+                    <i class="fas fa-file-alt"></i>
+                    <span>التقارير</span>
+                </a>
+            </div>
+        </nav>
+    </div>
+
+    <script src="/js/app.js"></script>
+    <script>
+        class ClientsManager {
+            constructor() {
+                this.clients = [];
+                this.filteredClients = [];
+                this.init();
+            }
+
+            async init() {
+                await this.loadClients();
+                this.setupEventListeners();
+                this.renderClients();
+            }
+
+            async loadClients() {
+                await window.app.loadData();
+                this.clients = window.app.data.clients || [];
+                this.filteredClients = [...this.clients];
+                this.updateClientsCount();
+            }
+
+            setupEventListeners() {
+                // Add client form
+                document.getElementById('addClientForm').addEventListener('submit', this.addClient.bind(this));
+                
+                // Search functionality
+                const searchInput = document.getElementById('searchClients');
+                searchInput.addEventListener('input', debounce(this.filterClients.bind(this), 300));
+                
+                // Sort functionality
+                document.getElementById('sortClients').addEventListener('change', this.sortClients.bind(this));
+                
+                // Auto-generate client ID
+                document.getElementById('clientName').addEventListener('input', this.generateClientId.bind(this));
+            }
+
+            generateClientId() {
+                const nameInput = document.getElementById('clientName');
+                const idInput = document.getElementById('clientId');
+                
+                if (nameInput.value && !idInput.value) {
+                    // Generate ID based on name + timestamp
+                    const name = nameInput.value.trim();
+                    const timestamp = Date.now().toString().slice(-4);
+                    const id = name.substring(0, 3).toUpperCase() + timestamp;
+                    idInput.value = id;
+                }
+            }
+
+            async addClient(e) {
+                e.preventDefault();
+                
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                window.app.showLoading(submitBtn);
+                
+                const formData = new FormData(e.target);
+                const clientData = Object.fromEntries(formData);
+                
+                // Validate form
+                if (!window.app.validateForm(e.target)) {
+                    window.app.hideLoading(submitBtn);
+                    return;
+                }
+                
+                try {
+                    const response = await fetch('/api/clients', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(clientData)
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        window.app.showAlert('تم إضافة العميل بنجاح! 🎉', 'success');
+                        e.target.reset();
+                        await this.loadClients();
+                        this.renderClients();
+                    } else {
+                        window.app.showAlert(result.message || 'حدث خطأ في إضافة العميل', 'error');
+                    }
+                } catch (error) {
+                    console.error('خطأ في إضافة العميل:', error);
+                    window.app.showAlert('حدث خطأ في الاتصال بالخادم', 'error');
+                } finally {
+                    window.app.hideLoading(submitBtn);
+                }
+            }
+
+            filterClients() {
+                const searchTerm = document.getElementById('searchClients').value.toLowerCase();
+                
+                this.filteredClients = this.clients.filter(client => 
+                    client.name.toLowerCase().includes(searchTerm) ||
+                    client.clientId.toLowerCase().includes(searchTerm)
+                );
+                
+                this.renderClients();
+            }
+
+            sortClients() {
+                const sortBy = document.getElementById('sortClients').value;
+                
+                this.filteredClients.sort((a, b) => {
+                    switch (sortBy) {
+                        case 'name':
+                            return a.name.localeCompare(b.name, 'ar');
+                        case 'clientId':
+                            return a.clientId.localeCompare(b.clientId);
+                        case 'createdAt':
+                            return new Date(b.createdAt) - new Date(a.createdAt);
+                        default:
+                            return 0;
+                    }
+                });
+                
+                this.renderClients();
+            }
+
+            calculateClientStats(clientId) {
+                const revenues = window.app.data.revenues
+                    .filter(r => r.clientId === clientId)
+                    .reduce((sum, r) => sum + r.amount, 0);
+                
+                const expenses = window.app.data.expenses
+                    .filter(e => e.clientId === clientId)
+                    .reduce((sum, e) => sum + e.amount, 0);
+                
+                return { revenues, expenses };
+            }
+
+            renderClients() {
+                const tbody = document.querySelector('#clientsTable tbody');
+                
+                if (this.filteredClients.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-color); opacity: 0.6;">
+                                <i class="fas fa-users" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                                ${this.clients.length === 0 ? 'لا يوجد عملاء حتى الآن' : 'لا توجد نتائج للبحث'}
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                tbody.innerHTML = this.filteredClients.map((client, index) => {
+                    const stats = this.calculateClientStats(client.clientId);
+                    return `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <div class="user-avatar" style="width: 35px; height: 35px; font-size: 0.9rem;">
+                                        ${client.name.charAt(0)}
+                                    </div>
+                                    <strong>${client.name}</strong>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge primary">${client.clientId}</span>
+                            </td>
+                            <td>${window.app.formatDate(client.createdAt)}</td>
+                            <td style="color: var(--success-color); font-weight: 600;">
+                                ${this.formatCurrency(stats.revenues)}
+                            </td>
+                            <td style="color: var(--danger-color); font-weight: 600;">
+                                ${this.formatCurrency(stats.expenses)}
+                            </td>
+                            <td>
+                                <div style="display: flex; gap: 5px;">
+                                    <button class="btn-icon success" onclick="viewClientDetails('${client.clientId}')" title="عرض التفاصيل">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn-icon warning" onclick="editClient('${client.id}')" title="تعديل">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn-icon danger" onclick="deleteClient('${client.id}')" title="حذف">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            updateClientsCount() {
+                document.getElementById('clientsCount').textContent = this.clients.length;
+            }
+
+            formatCurrency(amount) {
+                return new Intl.NumberFormat('ar-EG', {
+                    style: 'currency',
+                    currency: 'EGP',
+                    minimumFractionDigits: 0
+                }).format(amount);
+            }
+        }
+
+        // Global functions for client actions
+        function viewClientDetails(clientId) {
+            const client = window.clientsManager.clients.find(c => c.clientId === clientId);
+            if (!client) return;
+            
+            const stats = window.clientsManager.calculateClientStats(clientId);
+            const profit = stats.revenues - stats.expenses;
+            
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>تفاصيل العميل</h3>
+                        <button class="modal-close">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="client-details">
+                            <div class="detail-item">
+                                <strong>الاسم:</strong> ${client.name}
+                            </div>
+                            <div class="detail-item">
+                                <strong>رقم العميل:</strong> ${client.clientId}
+                            </div>
+                            <div class="detail-item">
+                                <strong>تاريخ الإضافة:</strong> ${window.app.formatDate(client.createdAt)}
+                            </div>
+                            <div class="stats-summary">
+                                <div class="stat-item success">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>الإيرادات: ${window.clientsManager.formatCurrency(stats.revenues)}</span>
+                                </div>
+                                <div class="stat-item danger">
+                                    <i class="fas fa-arrow-down"></i>
+                                    <span>المصروفات: ${window.clientsManager.formatCurrency(stats.expenses)}</span>
+                                </div>
+                                <div class="stat-item ${profit >= 0 ? 'success' : 'danger'}">
+                                    <i class="fas fa-chart-line"></i>
+                                    <span>صافي الربح: ${window.clientsManager.formatCurrency(profit)}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            modal.querySelector('.modal-close').addEventListener('click', () => {
+                modal.remove();
+            });
+            
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
+        }
+
+        function editClient(clientId) {
+            window.app.showAlert('ميزة التعديل ستكون متاحة قريباً', 'warning');
+        }
+
+        async function deleteClient(clientId) {
+            const client = window.clientsManager.clients.find(c => c.id == clientId);
+            if (!client) {
+                window.app.showAlert('العميل غير موجود', 'error');
+                return;
+            }
+
+            const stats = window.clientsManager.calculateClientStats(client.clientId);
+            const hasTransactions = stats.revenues > 0 || stats.expenses > 0;
+
+            const confirmed = await window.app.showConfirmationDialog({
+                title: 'تأكيد حذف العميل',
+                subtitle: hasTransactions ? 'تحذير: العميل يحتوي على معاملات مالية' : 'هذا الإجراء لا يمكن التراجع عنه',
+                message: hasTransactions 
+                    ? 'لا يمكن حذف هذا العميل لأنه يحتوي على معاملات مالية. يجب حذف جميع المعاملات المرتبطة به أولاً.'
+                    : 'هل أنت متأكد من أنك تريد حذف هذا العميل نهائياً؟',
+                icon: hasTransactions ? 'exclamation-circle' : 'exclamation-triangle',
+                confirmText: hasTransactions ? 'فهمت' : 'حذف العميل',
+                confirmIcon: hasTransactions ? 'check' : 'trash',
+                cancelText: 'إلغاء',
+                itemInfo: {
+                    name: client.name,
+                    details: `رقم العميل: ${client.clientId} • الإيرادات: ${window.clientsManager.formatCurrency(stats.revenues)} • المصروفات: ${window.clientsManager.formatCurrency(stats.expenses)}`
+                },
+                onConfirm: async () => {
+                    if (hasTransactions) {
+                        return true; // Just close the dialog
+                    }
+
+                    try {
+                        const response = await fetch(`/api/clients/${clientId}`, {
+                            method: 'DELETE'
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (result.success) {
+                            // Reload data and refresh display
+                            await window.clientsManager.loadClients();
+                            window.clientsManager.renderClients();
+                            
+                            window.app.showAlert('تم حذف العميل بنجاح! 🗑️', 'success');
+                            return true;
+                        } else {
+                            window.app.showAlert(result.message || 'حدث خطأ في حذف العميل', 'error');
+                            return false;
+                        }
+                    } catch (error) {
+                        console.error('خطأ في حذف العميل:', error);
+                        window.app.showAlert('حدث خطأ في الاتصال بالخادم', 'error');
+                        return false;
+                    }
+                }
+            });
+        }
+
+        function exportClients() {
+            const clients = window.clientsManager.clients;
+            if (clients.length === 0) {
+                window.app.showAlert('لا يوجد عملاء للتصدير', 'warning');
+                return;
+            }
+            
+            const csvContent = "data:text/csv;charset=utf-8," 
+                + "الاسم,رقم العميل,تاريخ الإضافة\n"
+                + clients.map(client => 
+                    `"${client.name}","${client.clientId}","${window.app.formatDate(client.createdAt)}"`
+                ).join("\n");
+            
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "clients.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            window.app.showAlert('تم تصدير بيانات العملاء بنجاح', 'success');
+        }
+
+        // Initialize clients manager
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                window.clientsManager = new ClientsManager();
+            }, 100);
+        });
+    </script>
+
+    <style>
+        .badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .badge.primary {
+            background: rgba(102, 126, 234, 0.1);
+            color: var(--primary-color);
+        }
+
+        .btn-icon {
+            padding: 8px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-icon.success {
+            background: rgba(74, 222, 128, 0.1);
+            color: var(--success-color);
+        }
+
+        .btn-icon.warning {
+            background: rgba(251, 191, 36, 0.1);
+            color: var(--warning-color);
+        }
+
+        .btn-icon.danger {
+            background: rgba(248, 113, 113, 0.1);
+            color: var(--danger-color);
+        }
+
+        .btn-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+
+        .client-details .detail-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: var(--light-color);
+            border-radius: 8px;
+        }
+
+        .stats-summary {
+            margin-top: 20px;
+            display: grid;
+            gap: 10px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .stat-item.success {
+            background: rgba(74, 222, 128, 0.1);
+            color: var(--success-color);
+        }
+
+        .stat-item.danger {
+            background: rgba(248, 113, 113, 0.1);
+            color: var(--danger-color);
+        }
+    </style>
+</body>
+</html>
