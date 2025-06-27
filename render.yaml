@@ -5,7 +5,6 @@ services:
     buildCommand: npm install
     startCommand: node server.js
     rootDir: financial-system
-    ports:
-      - 12000
+    
 
 
